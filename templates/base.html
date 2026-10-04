@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Задачник{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <a href="{% url 'task_list' %}" class="brand">Задачник</a>
+        </div>
+
+        {% if user.is_authenticated %}
+          <div class="user-panel">
+            <span class="username">{{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="button button-ghost">Выйти</button>
+            </form>
+          </div>
+        {% endif %}
+      </header>
+
+      {% if messages %}
+        <div class="messages" aria-live="polite">
+          {% for message in messages %}
+            <div class="message message-{{ message.tags|default:'info' }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <main class="content">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </body>
+</html>

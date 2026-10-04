@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+  <section class="panel detail-panel">
+    <div class="detail-head">
+      <div>
+        <p class="eyebrow">Задача</p>
+        <h1>{{ task.title }}</h1>
+      </div>
+      <span class="status-badge {% if task.completed %}done{% else %}active{% endif %}">
+        {% if task.completed %}Выполнено{% else %}В работе{% endif %}
+      </span>
+    </div>
+
+    <div class="detail-body">
+      {% if task.category %}
+        <div class="detail-row">
+          <span class="detail-label">Категория</span>
+          <span class="category-badge">{{ task.category.name }}</span>
+        </div>
+      {% endif %}
+
+      {% if task.description %}
+        <div class="detail-row">
+          <span class="detail-label">Описание</span>
+          <p>{{ task.description }}</p>
+        </div>
+      {% endif %}
+
+      {% if task.due_date %}
+        <div class="detail-row">
+          <span class="detail-label">Срок</span>
+          <span class="task-date {% if task.due_date < today and not task.completed %}is-overdue{% endif %}">
+            {{ task.due_date|date:"d.m.Y" }}
+          </span>
+        </div>
+      {% endif %}
+
+      <div class="detail-row">
+        <span class="detail-label">Создана</span>
+        <span>{{ task.created_at|date:"d.m.Y H:i" }}</span>
+      </div>
+    </div>
+
+    <div class="task-actions detail-actions">
+      <form method="post" action="{% url 'task_toggle' task.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="button button-secondary">
+          {% if task.completed %}Вернуть в работу{% else %}Выполнено{% endif %}
+        </button>
+      </form>
+      <a href="{% url 'task_update' task.pk %}" class="button button-secondary">Изменить</a>
+      <a href="{% url 'task_list' %}" class="button button-ghost">Назад к списку</a>
+      <form method="post" action="{% url 'task_delete' task.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="button button-danger">Удалить</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Удаление задачи{% endblock %}
+
+{% block content %}
+  <section class="panel confirm-panel">
+    <h1>Удалить задачу?</h1>
+    <p>Вы уверены, что хотите удалить задачу <strong>{{ task.title }}</strong>?</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-actions">
+        <button type="submit" class="button button-danger">Да, удалить</button>
+        <a href="{% url 'task_detail' task.pk %}" class="button button-ghost">Отмена</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

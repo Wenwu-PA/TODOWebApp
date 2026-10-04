@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Выход{% endblock %}
+
+{% block content %}
+  <div class="auth-shell">
+    <div class="auth-card compact-card">
+      <h1>Вы вышли</h1>
+      <p>Спасибо, что пользовались Задачником.</p>
+      <a href="{% url 'login' %}" class="button button-primary button-full">Войти снова</a>
+    </div>
+  </div>
+{% endblock %}

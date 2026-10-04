@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Мои задачи{% endblock %}
+
+{% block content %}
+  <section class="panel">
+    <div class="list-header">
+      <div>
+        <p class="eyebrow">Личный план</p>
+        <h1>Мои задачи</h1>
+      </div>
+      <a href="{% url 'task_create' %}" class="button button-primary">+ Новая задача</a>
+    </div>
+
+    <div class="filter-bar" aria-label="Фильтр задач">
+      <a href="?status=all" class="filter-chip {% if status == 'all' or not status %}active{% endif %}">Все</a>
+      <a href="?status=active" class="filter-chip {% if status == 'active' %}active{% endif %}">Активные</a>
+      <a href="?status=done" class="filter-chip {% if status == 'done' %}active{% endif %}">Выполненные</a>
+    </div>
+
+    {% if tasks %}
+      <div class="task-list">
+        {% for task in tasks %}
+          <article class="task-card {% if task.completed %}is-done{% endif %}">
+            <div class="task-check">{% if task.completed %}<span>✓</span>{% endif %}</div>
+            <div class="task-body">
+              <div class="task-topline">
+                <h2>{{ task.title }}</h2>
+                {% if task.category %}
+                  <span class="category-badge">{{ task.category.name }}</span>
+                {% endif %}
+              </div>
+
+              {% if task.description %}
+                <p class="task-description">{{ task.description|truncatechars:120 }}</p>
+              {% endif %}
+
+              <div class="task-meta">
+                {% if task.due_date %}
+                  {% now "Y-m-d" as today %}
+                  <span class="task-date {% if task.due_date < today and not task.completed %}is-overdue{% endif %}">
+                    {{ task.due_date|date:"d.m.Y" }}
+                  </span>
+                {% else %}
+                  <span class="task-date muted">Нет срока</span>
+                {% endif %}
+
+                <span class="status-badge {% if task.completed %}done{% else %}active{% endif %}">
+                  {% if task.completed %}Выполнено{% else %}В работе{% endif %}
+                </span>
+              </div>
+            </div>
+
+            <div class="task-actions">
+              <form method="post" action="{% url 'task_toggle' task.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="button button-secondary">
+                  {% if task.completed %}Возобновить{% else %}Выполнено{% endif %}
+                </button>
+              </form>
+
+              <a href="{% url 'task_detail' task.pk %}" class="button button-secondary">Открыть</a>
+              <a href="{% url 'task_update' task.pk %}" class="button button-secondary">Изменить</a>
+              <form method="post" action="{% url 'task_delete' task.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="button button-danger">Удалить</button>
+              </form>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <p>Задач пока нет</p>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}
